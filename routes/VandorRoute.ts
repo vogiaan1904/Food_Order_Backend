@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import {
     GetVandorProfile,
     UpdateVandorProfile,
@@ -6,11 +6,13 @@ import {
     VandorLogin,
 } from '../controllers/VandorController'
 import { Authentication } from '../middlewares'
+import { ErrorHandler } from '../utility/ErrorUtility'
+
 const router = express.Router()
-router.post('/login', VandorLogin)
+router.post('/login', ErrorHandler(VandorLogin))
 
 router.use(Authentication)
-router.get('/profile', GetVandorProfile)
-router.patch('/profile', UpdateVandorProfile)
-router.patch('/service', UpdateVandorService)
+router.get('/profile', ErrorHandler(GetVandorProfile))
+router.patch('/profile', ErrorHandler(UpdateVandorProfile))
+router.patch('/service', ErrorHandler(UpdateVandorService))
 export { router as VandorRoute }
