@@ -1,12 +1,8 @@
 import bcrypt from 'bcrypt'
+import { NextFunction, Request } from 'express'
 import jwt from 'jsonwebtoken'
 import { VandorPayload } from '../dto'
 import { SECRET_KEY } from '../config'
-import { NextFunction, Request } from 'express'
-import { AuthPayload } from '../dto/Auth.dto'
-import { UnauthorizedException } from '../exceptions/Unauthorized'
-import { ErrorCode } from '../exceptions/Constants'
-import { FindVandor } from '../controllers'
 export const GenerateSalt = async () => {
     return await bcrypt.genSalt()
 }

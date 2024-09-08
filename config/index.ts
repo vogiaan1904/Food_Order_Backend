@@ -1,3 +1,7 @@
-export const MONGO_URL =
-    'mongodb+srv://vogiaan1904:vogiaan1904@cluster0.evgw2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-export const SECRET_KEY = 'jgdf%384uegd23&%(!(&'
+import dotenv from 'dotenv'
+import { Secret } from 'jsonwebtoken'
+dotenv.config({ path: '.env' })
+
+export const MONGO_URL = process.env.MONGO_URL as string
+export const SECRET_KEY = process.env.SECRET_KEY as Secret
+export const PORT = process.env.PORT

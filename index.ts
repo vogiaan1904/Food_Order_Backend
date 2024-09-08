@@ -6,6 +6,9 @@ import { AdminRoute, VandorRoute } from './routes'
 import { MONGO_URL } from './config'
 import { ErrorMiddleware } from './middlewares'
 
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env' })
+
 const app = express()
 
 app.use(bodyParser.json())
@@ -22,6 +25,7 @@ mongoose
     })
     .catch((err) => console.log(`error: ` + err))
 
-app.listen(3030, () => {
-    console.log(`App is listening to http://localhost:3030`)
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+    console.log(`App is listening to http://localhost:${PORT}`)
 })
