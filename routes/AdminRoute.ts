@@ -1,11 +1,10 @@
-import express, { Request, Response, NextFunction } from "express";
-import { CreateVandor, GetVandorById, GetVandors } from "../controllers";
-const router = express.Router();
-router.post("/vandor", CreateVandor);
-router.get("/vandors", GetVandors);
-router.get("/vandor/:id", GetVandorById);
-router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.json({ message: "Hello from admin" });
-});
+import express from 'express'
+import { CreateVandor, DeleteAllVandors, GetVandorById, GetVandors } from '../controllers'
+import { ErrorHandler } from '../utility/ErrorUtility'
+const router = express.Router()
+router.post('/vandor', ErrorHandler(CreateVandor))
+router.get('/vandors', ErrorHandler(GetVandors))
+router.get('/vandor/:id', ErrorHandler(GetVandorById))
+router.delete('/vandors', ErrorHandler(DeleteAllVandors))
 
-export { router as AdminRoute };
+export { router as AdminRoute }

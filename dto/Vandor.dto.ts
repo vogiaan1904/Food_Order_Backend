@@ -1,22 +1,29 @@
-export interface CreateVandorInput {
-  name: string;
-  ownerName: string;
-  foodType: [string];
-  pincode: string;
-  address: string;
-  phone: string;
-  email: string;
-  password: string;
+export interface CreateVandorInputs {
+    name: string
+    ownerName: string
+    foodTypes: [string]
+    pincode: string
+    address: string
+    phone: string
+    email: string
+    password: string
 }
 
-export interface VandorLoginInput {
-  email: string;
-  password: string;
+export interface VandorLoginInputs {
+    email: string
+    password: string
+}
+
+export interface UpdateVandorInputs {
+    name: string
+    address: string
+    phone: string
+    foodTypes: [string]
 }
 
 export interface VandorPayload {
-  _id: string;
-  email: string;
-  name: string;
-  foodType: [string];
+    _id: string
+    email: string
+    name: string
+    foodTypes: [string]
 }
