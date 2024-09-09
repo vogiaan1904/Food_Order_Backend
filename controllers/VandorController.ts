@@ -13,11 +13,7 @@ export const VandorLogin = async (req: Request, res: Response, next: NextFunctio
     if (existingVandor === null) {
         throw new NotFoundException('Vandor with email not found', ErrorCode.USER_NOT_FOUND)
     }
-    const validation = await ValidatePassword(
-        password,
-        existingVandor.password,
-        existingVandor.salt
-    )
+    const validation = await ValidatePassword(password, existingVandor.password, existingVandor.salt)
     if (validation) {
         const signature = GenerateSignature({
             _id: existingVandor.id,
@@ -96,4 +92,63 @@ export const GetFoods = async (req: Request, res: Response, next: NextFunction) 
         return res.json({ message: 'No foods available!' })
     }
     return res.json(foods)
+}
+
+export const FindFood = async (id: string | undefined, name?: string) => {
+    let food
+    try {
+        if (name) {
+            food = await Food.find({ name: name })
+        } else {
+            food = await Food.findById(id)
+        }
+        return food
+    } catch (error) {
+        throw new NotFoundException('No food with the given name or id', ErrorCode.PRODUCT_NOT_FOUND)
+    }
+}
+
+export const GetFoodById = async (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user
+    const foodId = req.params.id
+    let food
+
+    try {
+        food = await Food.findById(foodId)
+    } catch (error) {
+        throw new NotFoundException('No food with the given id', ErrorCode.PRODUCT_NOT_FOUND)
+    }
+    if ((food as any).vandorId === user._id.toHexString()) {
+        return res.json(food)
+    }
+    return res.json({ message: 'Food does not belong to the vandor!' })
+}
+
+export const GetFoodByName = async (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user
+    const vandorId = user._id.toHexString()
+    const foodName = req.body.name
+    try {
+        const food = await Food.findOne({ name: foodName, vandorId: vandorId })
+        return res.json(food)
+    } catch (error) {
+        throw new NotFoundException('No food with the given name', ErrorCode.PRODUCT_NOT_FOUND)
+    }
+}
+
+export const DeleteFood = async (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user
+    const vandorId = user._id.toHexString()
+    const foodId = req.params.id
+    let food
+    try {
+        food = await Food.findById(foodId)
+    } catch (error) {
+        throw new NotFoundException('No food with the given name', ErrorCode.PRODUCT_NOT_FOUND)
+    }
+    if ((food as any).vandorId === vandorId) {
+        const deletedFood = await Food.deleteOne({ _id: foodId })
+        return res.json(deletedFood)
+    }
+    return res.json({ message: 'Food does not belong to the vandor!' })
 }
