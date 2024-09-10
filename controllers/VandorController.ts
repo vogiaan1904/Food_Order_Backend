@@ -128,8 +128,9 @@ export const GetFoodByName = async (req: Request, res: Response, next: NextFunct
     const user = (req as any).user
     const vandorId = user._id.toHexString()
     const foodName = req.body.name
+    let food
     try {
-        const food = await Food.findOne({ name: foodName, vandorId: vandorId })
+        food = await Food.find({ name: foodName, vandorId: vandorId })
         return res.json(food)
     } catch (error) {
         throw new NotFoundException('No food with the given name', ErrorCode.PRODUCT_NOT_FOUND)
@@ -141,6 +142,7 @@ export const DeleteFood = async (req: Request, res: Response, next: NextFunction
     const vandorId = user._id.toHexString()
     const foodId = req.params.id
     let food
+
     try {
         food = await Food.findById(foodId)
     } catch (error) {
