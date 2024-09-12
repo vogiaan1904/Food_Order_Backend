@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+    AdminAddFood,
     CreateVandor,
     DeleteAllCustomers,
     DeleteAllVandors,
@@ -13,6 +14,7 @@ router.post('/vandor', ErrorHandler(CreateVandor))
 router.get('/vandors', ErrorHandler(GetVandors))
 router.get('/vandor/:id', ErrorHandler(GetVandorById))
 router.delete('/vandors', ErrorHandler(DeleteAllVandors))
+router.post('/food/:id', ErrorHandler(AdminAddFood))
 
 router.get('/customers', ErrorHandler(GetCustomers))
 router.delete('/customers', ErrorHandler(DeleteAllCustomers))

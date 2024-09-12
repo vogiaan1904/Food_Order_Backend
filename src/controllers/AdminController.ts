@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { CreateVandorInputs } from '../dto'
-import { Vandor, Customer } from '../models'
+import { CreateFoodInputs, CreateVandorInputs } from '../dto'
+import { Vandor, Customer, Food } from '../models'
 import { GeneratePassword, GenerateSalt } from '../utility'
 import { ErrorCode, NotFoundException } from '../exceptions'
 
@@ -77,6 +77,29 @@ export const DeleteAllVandors = async (req: Request, res: Response, next: NextFu
     } catch (error) {
         console.log(error)
     }
+}
+
+export const AdminAddFood = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.id
+    const vandor = await FindVandor(userId)
+    if (vandor === null) {
+        throw new NotFoundException('Vandor not found!', ErrorCode.USER_NOT_FOUND)
+    }
+    const { name, description, category, foodType, readyTime, price } = <CreateFoodInputs>req.body
+    const createdFood = await Food.create({
+        vandorId: userId,
+        name: name,
+        description: description,
+        category: category,
+        foodType: foodType,
+        readyTime: readyTime,
+        price: price,
+        images: [],
+        rating: 0,
+    })
+    vandor.foods.push(createdFood)
+    const result = await vandor.save()
+    return res.json(result)
 }
 
 /* ---------------------------- Customer Handler ---------------------------- */

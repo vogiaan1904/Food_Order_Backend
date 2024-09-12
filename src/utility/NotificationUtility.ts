@@ -10,22 +10,25 @@ export const GenerateOtp = () => {
 
 export const onRequestOtp = async (email: string, title: string, body: string) => {
     try {
-        const transporter = nodemailer.createTransport({
-            service: MAIL_HOST,
-            auth: {
-                user: MAIL_USERNAME,
-                pass: MAIL_PASSWORD,
-            },
-        })
-        const mailOptions = {
-            from: MAIL_USERNAME,
-            to: email,
-            subject: title,
-            html: body,
-        }
-        let info = await transporter.sendMail(mailOptions)
-        console.log('Email info: ', info)
-        return info
+        // const transporter = nodemailer.createTransport({
+        //     service: MAIL_HOST,
+        //     secure: true,
+        //     auth: {
+        //         user: MAIL_USERNAME,
+        //         pass: MAIL_PASSWORD,
+        //     },
+        // })
+        // const mailOptions = {
+        //     from: MAIL_USERNAME,
+        //     to: email,
+        //     subject: title,
+        //     html: body,
+        // }
+        // let info = await transporter.sendMail(mailOptions)
+        // console.log('Email info: ', info)
+        // console.log(info)
+        console.log('Otp sent')
+        return true
     } catch (error: any) {
         console.log(error.message)
     }

@@ -20,7 +20,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
 
     const { email, phone, password } = customerInputs
     const existingCustomer = await Customer.findOne({ email: email })
-    console.log(existingCustomer)
     if (existingCustomer !== null) {
         throw new BadRequestsException('Customer already exists!', ErrorCode.USER_ALREADY_EXISTS)
     }
@@ -28,7 +27,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
     const salt = await GenerateSalt()
     const userPassword = await GeneratePassword(password, salt)
     const { otp, expiry } = GenerateOtp()
-    console.log(otp, expiry)
 
     const result = await Customer.create({
         email: email,
@@ -57,7 +55,6 @@ export const CustomerSignUp = async (req: Request, res: Response, next: NextFunc
             throw new NotFoundException('Unprocessable Entity', ErrorCode.UNPROCESSABLE_ENTITY)
         }
         const customerId = result._id.toString()
-        console.log(customerId)
         const signature = GenerateSignature({
             _id: customerId,
             email: result.email,
