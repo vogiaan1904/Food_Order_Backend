@@ -4,50 +4,37 @@ import { FindVandor } from './AdminController'
 import { GenerateSignature, ValidatePassword } from '../utility'
 import { BadRequestsException, ErrorCode, NotFoundException } from '../exceptions'
 import { Food } from '../models'
+import { AuthService, VandorService } from '../services'
 
 export const VandorLogin = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = <VandorLoginInputs>req.body
-
-    const existingVandor = await FindVandor('', email)
-
-    if (existingVandor === null) {
-        throw new NotFoundException('Vandor with email not found', ErrorCode.USER_NOT_FOUND)
-    }
-    const validation = await ValidatePassword(password, existingVandor.password, existingVandor.salt)
-    if (validation) {
-        const signature = GenerateSignature({
-            _id: existingVandor.id,
-            email: existingVandor.email,
-            foodTypes: existingVandor.foodTypes,
-            name: existingVandor.name,
-        })
-
-        return res.json(signature)
-    } else {
-        throw new BadRequestsException('Incorrect password!', ErrorCode.INCORRECT_PASSWORD)
-    }
+    const result = await AuthService.VandorLogin(email, password)
+    return res.json(result)
 }
 
 export const GetVandorProfile = async (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user
-    const existingVandor = await FindVandor(user._id)
-    return res.json(existingVandor)
+    const result = await VandorService.FindVandorProfile(user._id)
+    return res.json(result)
 }
 
 export const UpdateVandorProfile = async (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user
 
-    const existingVandor = await FindVandor(user._id)
-    if (existingVandor === null) {
-        throw new NotFoundException('Vandor not found!', ErrorCode.USER_NOT_FOUND)
-    }
     const { name, address, phone, foodTypes } = <UpdateVandorInputs>req.body
-    existingVandor.name = name
-    existingVandor.address = address
-    existingVandor.phone = phone
-    existingVandor.foodTypes = foodTypes
-    const updateResult = await existingVandor.save()
-    return res.json(updateResult)
+
+    //do not update non-value fields
+    const updateData: Partial<UpdateVandorInputs> = {}
+
+    if (phone) updateData.phone = phone
+    if (name) updateData.name = name
+    if (address) updateData.address = address
+    if (foodTypes) updateData.foodTypes = foodTypes
+
+    console.log(updateData)
+    const result = await VandorService.EditVandorProfile(user._id, updateData)
+
+    return res.json(result)
 }
 
 export const UpdateVandorService = async (req: Request, res: Response, next: NextFunction) => {
