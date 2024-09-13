@@ -61,14 +61,7 @@ export const AdminAddFood = async (req: Request, res: Response, next: NextFuncti
 
 /* ---------------------------- Customer Handler ---------------------------- */
 
-export const GetCustomers = async (req: Request, res: Response, next: NextFunction) => {
-    const customers = await Customer.find()
-    if (customers !== null) {
-        return res.json(customers)
-    }
-
-    return res.json({ message: 'No customers' })
-}
+export const GetCustomers = async (req: Request, res: Response, next: NextFunction) => {}
 
 export const DeleteAllCustomers = async (req: Request, res: Response, next: NextFunction) => {
     try {
