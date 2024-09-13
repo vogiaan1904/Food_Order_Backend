@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { ErrorCode, UnauthorizedException } from '../exceptions'
-import { FindVandor } from '../controllers'
 import jwt from 'jsonwebtoken'
 import { SECRET_KEY } from '../config'
 import { AuthPayload } from '../dto/Auth.dto'
+import { VandorService } from '../services'
+import { VandorRepository } from '../repository'
 
 export const Authentication = async (req: Request, res: Response, next: NextFunction) => {
     const signature = req.headers.authorization
@@ -14,8 +15,9 @@ export const Authentication = async (req: Request, res: Response, next: NextFunc
 
     try {
         const payload = (await jwt.verify(signature.split(' ')[1], SECRET_KEY)) as AuthPayload
-        const existingVandor = await FindVandor(payload._id)
+        const existingVandor = await VandorRepository.FindVandorById(payload._id)
         if (!existingVandor) {
+            //might not necessary
             next(new UnauthorizedException('Vandor not exist', ErrorCode.UNAUTHORIZED))
         }
         ;(req as any).user = existingVandor

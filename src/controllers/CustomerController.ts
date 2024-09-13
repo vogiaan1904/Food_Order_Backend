@@ -1,24 +1,25 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { plainToClass } from 'class-transformer'
 import { validate, validateOrReject } from 'class-validator'
-import { CreateCustomerInputs } from '../dto/Customer.dto'
+import { CustomerSignUpSchema } from '../dto/Customer.dto'
 import { BadRequestsException, ErrorCode, NotFoundException } from '../exceptions'
 import { Customer } from '../models/Customer'
 import { GenerateOtp, GeneratePassword, GenerateSalt, GenerateSignature, onRequestOtp } from '../utility'
 import { verify } from 'jsonwebtoken'
 export const CustomerSignUp = async (req: Request, res: Response, next: NextFunction) => {
-    const customerInputs = plainToClass(CreateCustomerInputs, req.body)
-    const inputErrors = await validate(customerInputs)
-    if (inputErrors.length > 0) {
-        const formattedErrors = inputErrors.map((e) => ({
-            property: e.property,
-            constraints: e.constraints,
-        }))
-        throw new BadRequestsException('Unprocessable Entity', ErrorCode.UNPROCESSABLE_ENTITY, formattedErrors)
-    }
+    const validatedData = CustomerSignUpSchema.parse(req.body)
+    // const customerInputs = plainToClass(CreateCustomerInputs, req.body)
+    // const inputErrors = await validate(customerInputs)
+    // if (inputErrors.length > 0) {
+    //     const formattedErrors = inputErrors.map((e) => ({
+    //         property: e.property,
+    //         constraints: e.constraints,
+    //     }))
+    //     throw new BadRequestsException('Unprocessable Entity', ErrorCode.UNPROCESSABLE_ENTITY, formattedErrors)
+    // }
     // await validateOrReject(customerInputs) // throw an array of ValidationError
 
-    const { email, phone, password } = customerInputs
+    const { email, phone, password } = validatedData
     const existingCustomer = await Customer.findOne({ email: email })
     if (existingCustomer !== null) {
         throw new BadRequestsException('Customer already exists!', ErrorCode.USER_ALREADY_EXISTS)

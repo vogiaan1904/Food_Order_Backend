@@ -26,4 +26,5 @@ router.get('/foods', ErrorHandler(GetFoods))
 router.get('/food/:id', ErrorHandler(GetFoodById))
 router.get('/food', ErrorHandler(GetFoodByName))
 router.delete('/food/:id', ErrorHandler(DeleteFood))
+
 export { router as VandorRoute }

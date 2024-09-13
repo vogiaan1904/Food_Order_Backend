@@ -1,73 +1,30 @@
 import { NextFunction, Request, Response } from 'express'
-import { CreateFoodInputs, CreateVandorInputs } from '../dto'
-import { Vandor, Customer, Food } from '../models'
-import { GeneratePassword, GenerateSalt } from '../utility'
+import { CreateFoodInputs, CreateVandorSchema } from '../dto'
 import { ErrorCode, NotFoundException } from '../exceptions'
+import { Customer, Food, Vandor } from '../models'
+import { AdminService, VandorService } from '../services'
+import { GeneratePassword, GenerateSalt } from '../utility'
+import { AddVandor } from '../services/AdminService'
+import { date } from 'zod'
 
 /* ----------------------------- Vandor handler ----------------------------- */
 
-export const FindVandor = async (id: string | undefined, email?: string) => {
-    if (email) {
-        return await Vandor.findOne({ email: email })
-    } else {
-        try {
-            return await Vandor.findById(id)
-        } catch (error) {
-            throw new NotFoundException('Vandor not found!', ErrorCode.USER_NOT_FOUND)
-        }
-    }
-}
-
 export const CreateVandor = async (req: Request, res: Response, next: NextFunction) => {
-    const { name, address, pincode, foodTypes, email, password, ownerName, phone } = <CreateVandorInputs>req.body
+    const validatedData = CreateVandorSchema.parse(req.body)
+    const result = await AddVandor(validatedData)
 
-    const existingVandor = await FindVandor('', email)
-
-    if (existingVandor !== null) {
-        return res.json({
-            message: 'A vandor has been already existing with this email Id',
-        })
-    }
-
-    const salt = await GenerateSalt()
-    const userPassword = await GeneratePassword(password, salt)
-
-    const createdVandor = await Vandor.create({
-        name: name,
-        address: address,
-        pincode: pincode,
-        foodTypes: foodTypes,
-        email: email,
-        password: userPassword,
-        ownerName: ownerName,
-        phone: phone,
-        rating: 0,
-        serviceAvailable: false,
-        coverImages: [],
-        salt: salt,
-        foods: [],
-    })
-    return res.json(createdVandor)
+    return res.json(result)
 }
 
 export const GetVandorById = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
-    const vandorById = await FindVandor(id)
-
-    if (vandorById !== null) {
-        return res.json(vandorById)
-    }
-
-    return res.json({ message: 'No with the given id' })
+    const result = await VandorService.GetProfile(id)
+    return res.json(result)
 }
 
 export const GetVandors = async (req: Request, res: Response, next: NextFunction) => {
-    const vandors = await Vandor.find()
-    if (vandors !== null) {
-        return res.json(vandors)
-    }
-
-    return res.json({ message: 'No vandors' })
+    const result = await AdminService.GetAllVandors()
+    return res.json(result)
 }
 
 export const DeleteAllVandors = async (req: Request, res: Response, next: NextFunction) => {
@@ -81,7 +38,7 @@ export const DeleteAllVandors = async (req: Request, res: Response, next: NextFu
 
 export const AdminAddFood = async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.id
-    const vandor = await FindVandor(userId)
+    const vandor = await VandorService.GetProfile(userId)
     if (vandor === null) {
         throw new NotFoundException('Vandor not found!', ErrorCode.USER_NOT_FOUND)
     }

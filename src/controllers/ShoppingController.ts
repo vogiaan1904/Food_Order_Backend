@@ -1,7 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { FoodDoc, Vandor } from '../models'
-import { FindFood } from './VandorController'
-import { FindVandor } from './AdminController'
 import { ErrorCode, NotFoundException } from '../exceptions'
 
 export const GetFoodAvailability = async (req: Request, res: Response, next: NextFunction) => {

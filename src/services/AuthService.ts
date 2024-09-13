@@ -1,11 +1,10 @@
-import { FindVandor } from '../controllers'
 import { BadRequestsException, ErrorCode, NotFoundException } from '../exceptions'
 import { Vandor } from '../models'
+import { VandorRepository } from '../repository'
 import { GenerateSignature, ValidatePassword } from '../utility'
 
 export const VandorLogin = async (email: string, password: string) => {
-    const existingVandor = await Vandor.findOne({ email: email })
-
+    const existingVandor = await VandorRepository.FindVandorByEmail(email)
     if (existingVandor === null) {
         throw new NotFoundException('Vandor with email not found', ErrorCode.USER_NOT_FOUND)
     }
