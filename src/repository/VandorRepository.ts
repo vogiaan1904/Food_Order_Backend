@@ -68,3 +68,12 @@ export const UpdateVandorService = async (userId: string, serviceState: any) => 
         throw new InternalException('Database query failed', ErrorCode.UNPROCESSABLE_ENTITY, error)
     }
 }
+
+export const DeleteAllVandors = async () => {
+    try {
+        const response = await Vandor.deleteMany({})
+        return response
+    } catch (error) {
+        throw new InternalException('Database query failed', ErrorCode.UNPROCESSABLE_ENTITY, error)
+    }
+}

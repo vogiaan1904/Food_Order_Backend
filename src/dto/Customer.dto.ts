@@ -1,4 +1,3 @@
-import { IsEmail, IsEmpty, Length } from 'class-validator'
 import { z } from 'zod'
 
 export const CustomerSignUpSchema = z.object({
@@ -7,8 +6,20 @@ export const CustomerSignUpSchema = z.object({
     password: z.string().min(6).max(50),
 })
 
+export const CustomerLoginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6).max(50),
+})
+
+export const CustomerUpdateSchema = z.object({
+    firstName: z.string().min(1).optional(),
+    lastName: z.string().min(1).optional(),
+    address: z.string().min(3).optional(),
+})
+
 export interface CustomerPayload {
     _id: string
     email: string
     verified: boolean
+    role: 'customer'
 }

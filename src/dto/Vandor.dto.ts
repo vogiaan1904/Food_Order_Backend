@@ -28,4 +28,5 @@ export interface VandorPayload {
     email: string
     name: string
     foodTypes: [string]
+    role: 'vendor'
 }

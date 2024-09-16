@@ -1,5 +1,6 @@
-import { BadRequestsException, ErrorCode } from '../exceptions'
-import { VandorRepository } from '../repository'
+import { VandorService } from '.'
+import { BadRequestsException, ErrorCode, NotFoundException } from '../exceptions'
+import { FoodRepository, VandorRepository } from '../repository'
 import { GeneratePassword, GenerateSalt } from '../utility'
 
 export const AddVandor = async (data: any) => {
@@ -24,4 +25,20 @@ export const GetVandorByEmail = async (email: string) => {
 export const GetAllVandors = async () => {
     const vandors = await VandorRepository.FindAllVandors()
     return vandors
+}
+
+export const AddFood = async (vandorId: string, data: any) => {
+    const vendor = await VandorService.GetProfile(vandorId)
+    if (vendor === null) {
+        throw new NotFoundException('Vandor not found!', ErrorCode.USER_NOT_FOUND)
+    }
+    const createdFood = await FoodRepository.CreateFood(vandorId, data)
+    vendor.foods.push(createdFood)
+    const updatedVender = await vendor.save()
+    return updatedVender
+}
+
+export const DeleteAllVandors = async () => {
+    const response = await VandorRepository.DeleteAllVandors()
+    return response
 }

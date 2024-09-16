@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, Date } from 'mongoose'
 
 interface CustomerDoc extends Document {
     email: string
@@ -26,7 +26,7 @@ const CustomerSchema = new Schema(
         phone: { type: String, required: true },
         verified: { type: Boolean, required: true },
         otp: { type: Number, required: true },
-        otp_expiry: { type: Number, required: true },
+        otp_expiry: { type: Date, required: true },
         lat: { type: Number },
         lng: { type: Number },
     },

@@ -10,13 +10,13 @@ import {
     UpdateVandorService,
     VandorLogin,
 } from '../controllers/VandorController'
-import { Authentication } from '../middlewares'
+import { Authenticate } from '../middlewares'
 import { ErrorHandler } from '../utility'
 
 const router = express.Router()
 router.post('/login', ErrorHandler(VandorLogin))
 
-router.use(Authentication)
+router.use(Authenticate)
 router.get('/profile', ErrorHandler(GetVandorProfile))
 router.patch('/profile', ErrorHandler(UpdateVandorProfile))
 router.patch('/service', ErrorHandler(UpdateVandorService))
